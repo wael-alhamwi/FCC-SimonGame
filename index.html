@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simon Game</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google fonts CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Butterfly+Kids" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom styles for this template -->
+    <style>
+
+    body{
+      background-color: #555555;
+      font-family: 'Butterfly Kids', cursive;
+    }
+    .container{
+      padding-top: 10%;
+    }
+    .container h1{
+      color: white;
+    }
+    .container h3{
+      color: white;
+    }
+    .container a{
+      color: #ffa500;
+    }
+    .button {
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 20px;
+      margin: 4px 2px;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .buttonTop {    /* Green */
+        background-color: #555555; 
+        color: #4CAF50; 
+        border: thick solid #4CAF50;
+
+    }
+    .buttonTop:hover {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .btnTop{
+      background-color: #4CAF50;
+        color: white;
+    }
+
+    .buttonBottom {  /* Blue */
+        background-color: #555555; 
+        color: #008CBA; 
+        border: thick solid #008CBA;
+    }
+    .buttonBottom:hover {
+        background-color: #008CBA;
+        color: white;
+    }
+    .btnBtm{
+        background-color: #008CBA;
+        color: white;
+    }
+
+    .buttonMidRight {  
+        background-color: #555555; 
+        color: #f44336; 
+        border: thick solid #f44336;
+        margin-left: 25px;
+    }
+    .buttonMidRight:hover {
+        background-color: #f44336;
+        color: white;
+    }
+    .btnMdRht{
+        background-color: #f44336;
+        color: white;
+    }
+    .buttonMidLeft { /* Orange */
+        background-color: #555555;
+        color: #ffa500;
+        border: thick solid #ffa500;
+        margin-right: 25px;
+    }
+
+    .buttonMidLeft:hover {
+        background-color: #ffa500;
+        color: white;
+    }
+    .btnMdLft{
+      background-color: #ffa500;
+      color: white;
+    }
+    .buttonStart { /* Red */
+        background-color: #f44336;
+        color: white;
+    }
+    .buttonStrict { /* Orange */
+        background-color: #ffa500;
+        color: white;
+    }
+    .buttonReset { /* Orange */
+        background-color: #008CBA;
+        color: white;
+    }
+    .counter{
+      color: #ffa500;
+      font-size: 30px;
+    }
+    </style>
+
+
+
+    <script type="text/javascript">
+
+      
+       /* 
+        - Create random series of button presses  // Done
+
+
+        - Each time I input a series of button presses correctly, I see the same series of button presses but with an additional step. 
+
+        - I hear a sound that corresponds to each button both when the series of button presses plays, and when I personally press a button.  // Done
+
+        - If I press the wrong button, I am notified that I have done so, and that series of button presses starts again to remind me of the pattern so I can try again.  // Done
+
+        - I can see how many steps are in the current series of button presses. // Done
+
+        - If I want to restart, I can hit a button to do so, and the game will return to a single step. // Done
+        - I can play in strict mode where if I get a button press wrong, it notifies me that I have done so, and the game restarts at a new random series of button presses.  // Done
+
+        - I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over. // Done
+        */
+
+      // Global variables
+      var RandomSeries = [];
+      var seriesCount = 1;
+      var playerTurn = false;
+      var checkIndx = 0;
+      var newStageFlag = true;
+      var strictMode = false;
+
+      function activateStrict(){    // Turn on and off strict mode
+        var element = $("#strictStatus").text();
+        if(element == "OFF"){
+          $("#strictStatus").text("ON");
+          strictMode = true;
+        }else{
+          $("#strictStatus").text("OFF");
+          strictMode = false;
+        }
+      }
+
+
+      function playGreen(){ // 1
+       var audio = document.getElementById("audioGreen");
+       audio.play();
+       if(playerTurn){
+          checkRandSeries(1);
+       }
+     }
+
+      function playRed(){ // 2
+       var audio = document.getElementById("audioRed");
+       audio.play();
+       if(playerTurn){
+          checkRandSeries(2);
+       }
+     }
+
+       function playBlue(){ // 3
+       var audio = document.getElementById("audioBlue");
+       audio.play();
+       if(playerTurn){
+          checkRandSeries(3);
+       }
+     }
+
+       function playOrange(){ // 4
+       var audio = document.getElementById("audioOrange");
+       audio.play();
+       if(playerTurn){
+          checkRandSeries(4);
+       }
+      }
+
+      /* FUCKING FUNCTION ISNT WORKING */ 
+        function checkRandSeries(number){
+              console.log(number);
+          if(RandomSeries.length == 1){
+            console.log("Entered first if condition with number: "+number);
+            if(RandomSeries[checkIndx] != number){
+              console.log("1st Comparing Random value: "+RandomSeries[checkIndx]+" To input: "+number + " Is NOT equal");
+              playerTurn = false;
+              checkIndx = 0;
+              alert("Wrong input try again!");
+              
+              if(strictMode){
+                  console.log("1st if Strict ON");
+                  newStageFlag = true;
+                  play(RandomSeries.length);
+                }else{
+                  console.log("1st if Strict OFF");
+                  newStageFlag = false;
+                  play(RandomSeries.length);
+                }
+
+            }else{
+              console.log("1st Comparing Random value: "+RandomSeries[checkIndx]+" To input: "+number + " IS equal");
+              playerTurn = false; 
+              newStageFlag = true;              
+              alert("Congrats you've passed stage # "+RandomSeries.length);
+                
+              play(RandomSeries.length+1);
+            }
+          }else{  // length > 1
+            if(checkIndx < RandomSeries.length){    // Index still in bound
+              console.log("Index value: "+checkIndx);
+              if(RandomSeries[checkIndx] != number){
+                console.log("2nd Comparing Random value: "+RandomSeries[checkIndx]+" To input: "+number + " Is NOT equal");
+                playerTurn = false;
+                checkIndx = 0;
+                alert("Wrong input try again!");
+                
+                if(strictMode){
+                  newStageFlag = true;
+                  console.log("1st if Strict ON");
+                  play(1);
+                }else{
+                  newStageFlag = false;
+                  console.log("1st if Strict OFF");
+                  play(RandomSeries.length);
+                }
+                
+              }else{
+                console.log("2nd Comparing Random value: "+RandomSeries[checkIndx]+" To input: "+number + " Is IS equal");
+                playerTurn = true;
+                checkIndx++;
+                if(checkIndx == RandomSeries.length){
+                  playerTurn = false;
+                  newStageFlag = true;
+                  checkIndx = 0;
+                  
+                  alert("Congrats you've passed stage # "+RandomSeries.length);
+                                  
+                  play(RandomSeries.length+1);
+                }
+              }
+            }
+            
+          }
+            
+        }
+
+        function generateRandomSeries() {
+          return Math.floor(Math.random() * 4) + 1;
+        }
+
+        function removePressedClass(){
+          $('#btnTop').removeClass( "btnTop" );
+          $('#btnMidRight').removeClass( "btnMdRht" );
+          $('#btnMidLeft').removeClass( "btnMdLft" );
+          $('#btnBottom').removeClass( "btnBtm" );
+        }
+
+        
+
+        function pressButtons(num){
+          removePressedClass();
+          switch(num) {
+            case 1:
+              playGreen();
+              $('#btnTop').addClass( "btnTop" );
+              break;
+            case 2:
+              playRed();
+              $('#btnMidRight').addClass( "btnMdRht" );
+
+              break;
+            case 3:
+              playBlue();
+              $('#btnBottom').addClass( "btnBtm" );
+
+              break;
+            case 4:
+              playOrange();
+              $('#btnMidLeft').addClass( "btnMdLft" );
+              break;
+          }
+        }
+        
+
+        function play(n){
+          if(!$('#startBtnId').prop('disabled')){ // Disable buttons to avoid game crasha
+            $('#strictBtnId').prop('disabled', true);
+            $('#startBtnId').prop('disabled', true);
+          }
+          
+          seriesCount = n;
+          if(seriesCount <= 20){
+              if(newStageFlag){
+                var tempRandNum = generateRandomSeries();
+                RandomSeries.push(tempRandNum);
+              }
+              
+            console.log(RandomSeries);
+            
+            if(seriesCount < 10){   // Show count series
+              $('#counterId').html("0"+seriesCount);
+            }else{
+              $('#counterId').html(seriesCount);
+            }
+
+            var tempNum = 0;
+            var myVar = setInterval(function(){     // Play series with 1 sec timeinterval
+              if(tempNum < seriesCount){
+                pressButtons(RandomSeries[tempNum]);
+                console.log(RandomSeries[tempNum]);
+                tempNum++;
+              }else{
+                  // Wait for player moves
+                  playerTurn = true;
+                  console.log("Player turn");
+                  myStopFunction();
+                  removePressedClass();
+                  
+                }
+            }, 1000);
+          }else{
+            alert("Game Over");
+            $("#resetBtnId").click();
+          }
+          
+          function myStopFunction() {
+              clearInterval(myVar);
+          }
+        }
+
+        function checkSeries(n){
+          for (var i = 0; i < n; i++) { // Check if match
+            RandomSeries[0];
+            pressButtons(tempRandNum);
+          }
+        }
+    </script>
+
+
+  </head>
+  <body>
+
+    <!-- Page Content -->
+    <div class="container text-center">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1>FCC Simon Game</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <button class="button buttonStart" id="startBtnId" onclick="play(1)">Start</button>
+          <button class="button buttonStrict" id="strictBtnId" onclick="activateStrict()">Strict mode: <span id="strictStatus" style="color:red">OFF</span></button>
+          <button class="button buttonReset" id="resetBtnId" value="Reload Page" onClick="document.location.reload(true)">Reset</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+        <button id="btnTop" class="button buttonTop" onclick="playGreen()">R</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+        <button id="btnMidLeft" class="button buttonMidLeft" onclick="playOrange()">G</button>
+        <span id="counterId" class="counter">--</span>
+        <button id="btnMidRight" class="button buttonMidRight" onclick="playRed()">B</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+        <button id="btnBottom" class="button buttonBottom" onclick="playBlue()">Y</button>
+        </div>
+      </div>
+      <h3>Developed by <a href="https://codepen.io/walhamw/" target="_blank">WH</a></h3>
+    </div>
+
+    <audio id="audioRed" src="https://s3.amazonaws.com/freecodecamp/simonSound1.mp3" type="audio/mpeg"></audio>
+    <audio id="audioGreen" src="https://s3.amazonaws.com/freecodecamp/simonSound2.mp3" type="audio/mpeg"></audio>
+    <audio id="audioBlue" src="https://s3.amazonaws.com/freecodecamp/simonSound3.mp3" type="audio/mpeg" ></audio>
+    <audio id="audioOrange" src="https://s3.amazonaws.com/freecodecamp/simonSound4.mp3" type="audio/mpeg"></audio>
+  </body>
+
+</html>
